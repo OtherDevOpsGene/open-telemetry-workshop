@@ -5,6 +5,7 @@ import static org.hamcrest.core.StringContains.containsString;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -13,12 +14,19 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import io.opentelemetry.api.GlobalOpenTelemetry;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 class NameControllerTest {
 
   @Autowired private MockMvc mvc;
 
+  @BeforeEach
+  public void setUp() {
+    GlobalOpenTelemetry.resetForTest(); // Reset the global instance before each test
+  }
+  
   @Test
   public void getName() throws Exception {
     mvc.perform(MockMvcRequestBuilders.get("/")
