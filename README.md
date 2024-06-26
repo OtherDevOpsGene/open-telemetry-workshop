@@ -2,6 +2,7 @@
 
 From KCDC2024
 
+More info at https://github.com/martinjt/practical-otel-workshop.
 
 ## Building
 
