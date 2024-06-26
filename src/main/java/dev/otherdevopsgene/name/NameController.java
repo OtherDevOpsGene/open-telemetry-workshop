@@ -30,23 +30,23 @@ public class NameController {
   @GetMapping("/")
   public String hello(@RequestParam String firstname, @RequestParam String surname) {
     log.info("Got firstname=[{}], surname=[{}]", firstname, surname);
-    
-    Span span = tracer.spanBuilder("hello").startSpan();
-    span.setAttribute("firstname", firstname);
-    span.setAttribute("surname", surname);
 
+    Span span = tracer.spanBuilder("hello").startSpan();
+ 
+    final StringBuilder message = new StringBuilder("Hello ");
+   
     // Make the span the current span
     try (Scope scope = span.makeCurrent()) {
-      
-      final StringBuilder message = new StringBuilder("Hello ");
+       span.setAttribute("firstname", firstname);
+      span.setAttribute("surname", surname);
+     
       message.append(firstname).append('\n');
-  
-      return message.toString();
     } catch(Throwable t) {
-      span.setStatus(StatusCode.ERROR, "Something bad happened!");
       span.recordException(t);
     } finally {
       span.end();
+  
+      return message.toString();
     }
   }
 }
