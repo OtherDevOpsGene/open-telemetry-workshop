@@ -1,8 +1,5 @@
 package dev.otherdevopsgene.name;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +20,7 @@ public class NameController {
   private final Tracer tracer;
 
   @Autowired
-  NameController(OpenTelemetry openTelemetry) {
+  public NameController(OpenTelemetry openTelemetry) {
     tracer = openTelemetry.getTracer(NameController.class.getName(), "0.1.0");
   }
   
@@ -32,13 +29,13 @@ public class NameController {
     log.info("Got firstname=[{}], surname=[{}]", firstname, surname);
 
     Span span = tracer.spanBuilder("hello").startSpan();
- 
+    span.setAttribute("firstname", firstname);
+    span.setAttribute("surname", surname);
+    
     final StringBuilder message = new StringBuilder("Hello ");
    
     // Make the span the current span
     try (Scope scope = span.makeCurrent()) {
-       span.setAttribute("firstname", firstname);
-      span.setAttribute("surname", surname);
      
       message.append(firstname).append('\n');
     } catch(Throwable t) {
